@@ -23,6 +23,6 @@ sudo pip install pytesseract
 
 账户密码等信息在 `GLOBAL` 变量中。
 
-发送提醒的邮箱需要 pop3 服务，然后将授权码写到 `GLOBAL\['SEND_PASS'\]` 中
+发送提醒的邮箱需要 pop3 服务，然后将授权码写到 `GLOBAL['SEND_PASS']` 中
 
 对于定时设置，参考链接：[python用schedule模块实现定时任务](https://blog.csdn.net/zd147896325/article/details/80003982)
