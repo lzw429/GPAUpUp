@@ -18,7 +18,7 @@ GLOBAL = {'STU_ID': '',  # 学号
           'SEND_ACCOUNT': '',  # 发送邮箱账号
           'SEND_PASS': '',  # 发送邮箱授权码
           'RECV_ACCOUNT': '',  # 接收邮箱账号
-          'RECV_TIME': "10:30"}  # 每日接收推送时间
+          'RECV_TIME': "23:00"}  # 每日接收推送时间
 
 
 ##########发送邮件函数###############
@@ -139,51 +139,51 @@ def get_gpa(stu_ID, stu_pwd):
     return [query_page.text, gpa]
 
 
-##########判断 GPA 是否更新以及更新以后的操作################
+########## 判断 GPA 是否更新以及更新以后的操作################
 def gpa_has_updated():
     # 查询最新成绩
     new_data = get_gpa(GLOBAL['STU_ID'], GLOBAL['STU_PASS'])
 
     # 如果发生变化
     if GLOBAL['gpa'] != new_data[1]:
-        print("您的GPA发生了变化")
-        send_email('您的GPA发生了变化', GLOBAL['page'] + new_data[0])
+        print("您的 GPA 发生了变化")
+        send_email('您的 GPA 发生了变化', GLOBAL['page'] + new_data[0])
         GLOBAL['gpa'] = new_data[1]
         GLOBAL['page'] = new_data[0]
 
 
-###########主函数#####################################
+########### 主函数 ###################################
 if __name__ == '__main__':
+    print("请稍候，正在获取 GPA ...")
+
     # 进行首次成绩查询并测试
     result = get_gpa(GLOBAL['STU_ID'], GLOBAL['STU_PASS'])
+    send_email('首次邮件测试', '您的 GPA 是 ' + result[1])
 
     # 进行人工确认
-    q1 = 'Your GPA is:' + result[1] + '  Right(Y/N)?'
+    q1 = 'Your GPA is: ' + result[1] + '  Right(Y/N)?'
     choice = input(q1)
     if not (choice == 'Y' or choice == 'y'):
         print('Please set your account in the code properly')
         sys.exit()
 
     # 进行邮件测试
-    send_email('首次邮件测试', '')
     q2 = 'Have you received a test email(Y/N)?'
     choice = input(q2)
     if not (choice == 'Y' or choice == 'y'):
-        print
-        'Please check your email setting int the code!'
+        print('Please check your email setting in the code!')
         sys.exit()
 
     # 测试完毕，开始定期执行
-    print
-    'Test OK! Let\'s go go go !'
+    print('Test success! Let\'s go go go !')
     GLOBAL['gpa'] = result[1]
     GLOBAL['page'] = result[0]
 
     # 设置定期执行时间
     schedule.every(5).seconds.do(gpa_has_updated)
 
-    # 每天10.30发一封邮件给自己确保程序没挂
-    schedule.every().day.at(GLOBAL['RECV_TIME']).do(send_email, '这是一封测试邮件,确保您的程序还活着', '')
+    # 每天在指定时间发一封邮件给自己确保程序运行
+    schedule.every().day.at(GLOBAL['RECV_TIME']).do(send_email, '这是一封测试邮件，您的 GPA 正被监控', '')
 
     while True:
         schedule.run_pending()
